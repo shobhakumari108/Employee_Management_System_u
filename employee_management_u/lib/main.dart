@@ -1,9 +1,15 @@
-import 'package:employee_management_u/auth/login_screen.dart';
 import 'package:employee_management_u/provider/userProvider.dart';
+import 'package:employee_management_u/screen/splash_screen.dart';
+import 'package:employee_management_u/service/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
+late SharedPreferencesHelper sharedPreferencesHelper;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferencesHelper = await SharedPreferencesHelper.getInstance();
+
   runApp(
     MultiProvider(
       providers: [
@@ -19,9 +25,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: UserLoginScreen(),
+      home: SplashScreen(),
     );
   }
 }

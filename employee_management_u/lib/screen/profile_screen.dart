@@ -133,7 +133,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Employee Profile'),
+        title: Text('Profile'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -147,11 +147,9 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
         ),
         actions: [
           IconButton(
-            icon: const CircleAvatar(
-              child: Icon(
-                Icons.edit,
-                color: Color.fromARGB(255, 61, 124, 251),
-              ),
+            icon: Icon(
+              Icons.edit,
+              color: Color.fromARGB(255, 61, 124, 251),
             ),
             onPressed: () {
               // Navigate to the edit screen
@@ -165,75 +163,84 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(userData.profilePhoto ?? ''),
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+              
+
+            child: ListView(
+              children: [
+                Center(
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage(userData.profilePhoto ?? ''),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                  
+                  
+          
+                _buildProfileCard(
+                  'Name',
+                  '${userData.firstName} ${userData.lastName}',
+                ),
+                _buildProfileCard(
+                  'Job Title',
+                  '${userData.jobTitle}',
+                ),
+                _buildProfileCard(
+                  'companyEmployeeID',
+                  '${userData.companyEmployeeID}',
+                ),
+                _buildProfileCard(
+                  'managerID',
+                  '${userData.managerID}',
+                ),
+                _buildProfileCard(
+                  'joiningDate',
+                  '${userData.joiningDate}',
+                ),
+                _buildProfileCard(
+                  'jobTitle',
+                  '${userData.jobTitle}',
+                ),
+                _buildProfileCard(
+                  'mobileNumber',
+                  '${userData.mobileNumber}',
+                ),
+                _buildProfileCard(
+                  'companyName',
+                  '${userData.companyName}',
+                ),
+                _buildProfileCard(
+                  'address',
+                  '${userData.address}',
+                ),
+                _buildProfileCard(
+                  'department',
+                  '${userData.department}',
+                ),
+                _buildProfileCard(
+                  'education',
+                  '${userData.education}',
+                ),
+                _buildProfileCard(
+                  'employmentStatus',
+                  '${userData.employmentStatus}',
+                ),
+                _buildProfileCard(
+                  'workSchedule',
+                  '${userData.workSchedule}',
+                ),
+                _buildProfileCard(
+                  'certificates',
+                  '', // Empty string, as the actual value is displayed in the ListView
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            _buildProfileCard(
-              'Name',
-              '${userData.firstName} ${userData.lastName}',
-            ),
-            _buildProfileCard(
-              'Job Title',
-              '${userData.jobTitle}',
-            ),
-            _buildProfileCard(
-              'companyEmployeeID',
-              '${userData.companyEmployeeID}',
-            ),
-            _buildProfileCard(
-              'managerID',
-              '${userData.managerID}',
-            ),
-            _buildProfileCard(
-              'joiningDate',
-              '${userData.joiningDate}',
-            ),
-            _buildProfileCard(
-              'jobTitle',
-              '${userData.jobTitle}',
-            ),
-            _buildProfileCard(
-              'mobileNumber',
-              '${userData.mobileNumber}',
-            ),
-            _buildProfileCard(
-              'companyName',
-              '${userData.companyName}',
-            ),
-            _buildProfileCard(
-              'address',
-              '${userData.address}',
-            ),
-            _buildProfileCard(
-              'department',
-              '${userData.department}',
-            ),
-            _buildProfileCard(
-              'education',
-              '${userData.education}',
-            ),
-            _buildProfileCard(
-              'employmentStatus',
-              '${userData.employmentStatus}',
-            ),
-            _buildProfileCard(
-              'workSchedule',
-              '${userData.workSchedule}',
-            ),
-            _buildProfileCard(
-              'certificates',
-              '', // Empty string, as the actual value is displayed in the ListView
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

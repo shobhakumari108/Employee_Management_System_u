@@ -172,6 +172,11 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         return;
       }
 
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.token}'
+      };
+
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('http://192.168.29.135:2000/app/attendence/addAttendence'),
@@ -184,6 +189,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         'Status': attendanceStatus,
         'attendenceDate': selectedDate.toUtc().toIso8601String(),
       });
+
+      request.headers.addAll(headers);
 
       request.files
           .add(await http.MultipartFile.fromPath('Photo', _selectedPhoto!));
