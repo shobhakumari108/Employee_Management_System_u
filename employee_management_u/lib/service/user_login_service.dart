@@ -45,6 +45,7 @@ class AuthService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${user.token}'
     };
+    print("=============${user.token}");
     try {
       String updateEmployeeUrl =
           "http://192.168.29.135:2000/app/users/updateByUser/${user.id}";

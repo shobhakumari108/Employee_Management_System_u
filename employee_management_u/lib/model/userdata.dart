@@ -51,7 +51,7 @@ class UserData {
       id = json['id'];
       companyEmployeeID = json['ComapnyEmplyeeID'];
       managerID = json['ManagerId'];
-      joiningDate = DateTime.parse(json['JoiningDate']);
+      // joiningDate = DateTime.parse(json['JoiningDate']);
       certificates = List<String>.from(json['Certificates']);
       profilePhoto = json['ProfilePhoto'];
       jobTitle = json['JobTitle'];
@@ -75,7 +75,7 @@ class UserData {
       'id': id,
       'ComapnyEmplyeeID': companyEmployeeID,
       'ManagerId': managerID,
-      'JoiningDate': joiningDate?.toIso8601String(),
+      // 'JoiningDate': joiningDate?.toIso8601String(),
       'Certificates': certificates,
       'ProfilePhoto': profilePhoto,
       'JobTitle': jobTitle,

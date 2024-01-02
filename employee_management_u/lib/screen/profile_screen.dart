@@ -197,10 +197,10 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                   'managerID',
                   '${userData.managerID}',
                 ),
-                _buildProfileCard(
-                  'joiningDate',
-                  '${userData.joiningDate}',
-                ),
+                // _buildProfileCard(
+                //   'joiningDate',
+                //   '${userData.joiningDate}',
+                // ),
                 _buildProfileCard(
                   'jobTitle',
                   '${userData.jobTitle}',
