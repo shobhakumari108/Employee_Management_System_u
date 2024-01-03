@@ -25,13 +25,14 @@ class _SplashScreenState extends State<SplashScreen> {
     // final userId = await sharedPreferencesHelper.getValue("userId");
     // final token = await sharedPreferencesHelper.getValue("token");
 
-    await SharedPreferences.getInstance().then((value) async { 
+    await SharedPreferences.getInstance().then((value) async {
       final userId = value.getString("userId");
       final token =
           // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRGF0YSI6eyJ1c2VybmFtZSI6IlNvYmhhIiwiZW1haWwiOiJTazEyM0BnbWFpbC5jb20iLCJpZCI6IjY1OGFjN2EyZWYzODE5Y2M0YWM2MGE3ZCIsImZpcnN0TmFtZSI6IlNvYmhhIiwibGFzdE5hbWUiOiJLdW1hcmkifSwiaWF0IjoxNzAzOTEzMDg3LCJleHAiOjE3MDQzNDUwODd9.MgFDmIudXWDHy065SB6BWRkFg94I8uszutfk9hf9RWY";
           value.getString("token");
       if (userId != null && token != null) {
         await apiService.getUserData(token, userId, context).then((value) {
+          
           if (value) {
             removeAllAndPush(context, const MyHomePage());
           } else {
@@ -54,19 +55,24 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: size.width * .8,
-          child: Center(
-              child: const Text(
-            "Emp...\nManagement",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          )),
+      body: Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 61, 124, 251),
+        ),
+        child: Center(
+          child: SizedBox(
+            width: size.width * .8,
+            child: Center(
+                child: const Text(
+              "Emp...\nManagement",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            )),
+          ),
         ),
       ),
     );
   }
 }
-
-
-

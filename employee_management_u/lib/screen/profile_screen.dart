@@ -11,9 +11,7 @@ import 'package:provider/provider.dart';
 class EmployeeProfileScreen extends StatefulWidget {
   // final UserData user;
 
-  const EmployeeProfileScreen({
-    Key? key,
-  }) : super(key: key);
+  const EmployeeProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<EmployeeProfileScreen> createState() => _EmployeeProfileScreenState();
@@ -25,7 +23,6 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     userData = Provider.of<UserProvider>(context).userInformation;
   }
 
@@ -133,7 +130,8 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
+        automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -163,84 +161,78 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-              
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Center(
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(userData.profilePhoto ?? ''),
+                ),
+              ),
+              const SizedBox(height: 20),
 
-            child: ListView(
-              children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: NetworkImage(userData.profilePhoto ?? ''),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                  
-                  
-          
-                _buildProfileCard(
-                  'Name',
-                  '${userData.firstName} ${userData.lastName}',
-                ),
-                _buildProfileCard(
-                  'Job Title',
-                  '${userData.jobTitle}',
-                ),
-                _buildProfileCard(
-                  'companyEmployeeID',
-                  '${userData.companyEmployeeID}',
-                ),
-                _buildProfileCard(
-                  'managerID',
-                  '${userData.managerID}',
-                ),
-                // _buildProfileCard(
-                //   'joiningDate',
-                //   '${userData.joiningDate}',
-                // ),
-                _buildProfileCard(
-                  'jobTitle',
-                  '${userData.jobTitle}',
-                ),
-                _buildProfileCard(
-                  'mobileNumber',
-                  '${userData.mobileNumber}',
-                ),
-                _buildProfileCard(
-                  'companyName',
-                  '${userData.companyName}',
-                ),
-                _buildProfileCard(
-                  'address',
-                  '${userData.address}',
-                ),
-                _buildProfileCard(
-                  'department',
-                  '${userData.department}',
-                ),
-                _buildProfileCard(
-                  'education',
-                  '${userData.education}',
-                ),
-                _buildProfileCard(
-                  'employmentStatus',
-                  '${userData.employmentStatus}',
-                ),
-                _buildProfileCard(
-                  'workSchedule',
-                  '${userData.workSchedule}',
-                ),
-                _buildProfileCard(
-                  'certificates',
-                  '', // Empty string, as the actual value is displayed in the ListView
-                ),
-              ],
-            ),
+              _buildProfileCard(
+                'Name',
+                '${userData.firstName} ${userData.lastName}',
+              ),
+              _buildProfileCard(
+                'Job Title',
+                '${userData.jobTitle}',
+              ),
+              _buildProfileCard(
+                'companyEmployeeID',
+                '${userData.companyEmployeeID}',
+              ),
+              _buildProfileCard(
+                'managerID',
+                '${userData.managerID}',
+              ),
+              // _buildProfileCard(
+              //   'joiningDate',
+              //   '${userData.joiningDate}',
+              // ),
+              _buildProfileCard(
+                'jobTitle',
+                '${userData.jobTitle}',
+              ),
+              _buildProfileCard(
+                'mobileNumber',
+                '${userData.mobileNumber}',
+              ),
+              _buildProfileCard(
+                'companyName',
+                '${userData.companyName}',
+              ),
+              _buildProfileCard(
+                'address',
+                '${userData.address}',
+              ),
+              _buildProfileCard(
+                'department',
+                '${userData.department}',
+              ),
+              _buildProfileCard(
+                'education',
+                '${userData.education}',
+              ),
+              _buildProfileCard(
+                'employmentStatus',
+                '${userData.employmentStatus}',
+              ),
+              _buildProfileCard(
+                'workSchedule',
+                '${userData.workSchedule}',
+              ),
+              _buildProfileCard(
+                'certificates',
+                '', // Empty string, as the actual value is displayed in the ListView
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

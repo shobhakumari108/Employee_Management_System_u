@@ -103,13 +103,16 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
                         removeAllAndPush(context, const MyHomePage());
                       } else {
-
                         showToast("Login Failed", Colors.red);
                       }
                     });
                     // print(value?.toJson());
                   },
                   style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10.0), // Adjust the radius as needed
+                    ),
                     primary: Color.fromARGB(255, 61, 124, 251),
                   ),
                   child: const Text(

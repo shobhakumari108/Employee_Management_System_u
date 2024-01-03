@@ -82,32 +82,37 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     try {
       bool locationPermissionGranted = await _requestLocationPermission();
 
-      if (locationPermissionGranted) {
-        Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
-
-        setState(() {
-          _currentPosition = position;
-          _getAddressFromLatLng();
-          _isFetchingLocation = false; // Location has been fetched
-          _isFetchingCurrentLocation =
-              false; // Current location has been fetched
-        });
-
-        // Periodically submit the address every 20 minutes
-        Timer.periodic(Duration(minutes: 55), (timer) {
-          _submitLocation();
-        });
+      if (attendanceStatus == 'Leave') {
+        // Do not allow fetching current location if attendance status is 'Leave'
+        return;
       } else {
-        print("Location permission not granted");
-        setState(() {
-          _currentPosition = null;
-          _currentAddress = 'Location permission not granted';
-          _isFetchingLocation = false; // Location fetching failed
-          _isFetchingCurrentLocation =
-              false; // Current location fetching failed
-        });
+        if (locationPermissionGranted) {
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+          );
+
+          setState(() {
+            _currentPosition = position;
+            _getAddressFromLatLng();
+            _isFetchingLocation = false; // Location has been fetched
+            _isFetchingCurrentLocation =
+                false; // Current location has been fetched
+          });
+
+          // Periodically submit the address every 20 minutes
+          Timer.periodic(Duration(minutes: 55), (timer) {
+            _submitLocation();
+          });
+        } else {
+          print("Location permission not granted");
+          setState(() {
+            _currentPosition = null;
+            _currentAddress = 'Location permission not granted';
+            _isFetchingLocation = false; // Location fetching failed
+            _isFetchingCurrentLocation =
+                false; // Current location fetching failed
+          });
+        }
       }
     } catch (e) {
       print("Error: $e");
@@ -177,7 +182,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         'Authorization': 'Bearer ${userData.token}'
       };
       print("${userData.token}");
-print("===================${userData.id}");
+      print("===================${userData.id}");
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('http://192.168.29.135:2000/app/attendence/addAttendence'),
@@ -191,10 +196,10 @@ print("===================${userData.id}");
         'attendenceDate': selectedDate.toUtc().toIso8601String(),
       });
       print("+++++++++++++++++++++++++++");
-print(userData.id);
-print('${_currentPosition!.latitude},${_currentPosition!.longitude}');
-print('${attendanceStatus}');
-print("${selectedDate.toUtc().toIso8601String()}");
+      print(userData.id);
+      print('${_currentPosition!.latitude},${_currentPosition!.longitude}');
+      print('${attendanceStatus}');
+      print("${selectedDate.toUtc().toIso8601String()}");
       request.headers.addAll(headers);
 
       request.files
@@ -227,27 +232,58 @@ print("${selectedDate.toUtc().toIso8601String()}");
       );
     }
   }
+  // Future<void> _pickImage(ImageSource source) async {
+  //   try {
+  //     if (attendanceStatus == 'Leave') {
+  //       // Do not allow picking image if attendance status is 'Leave'
+  //       return;
+  //     }
+
+  //     // Rest of your _pickImage implementation...
+  //   } on Exception catch (e) {
+  //     print('Error picking image: $e');
+  //     Fluttertoast.showToast(msg: 'Error picking image: $e');
+  //   }
+  // }
+
+  // Future<void> _getCurrentLocation() async {
+  //   try {
+  //     if (attendanceStatus == 'Leave') {
+  //       // Do not allow fetching current location if attendance status is 'Leave'
+  //       return;
+  //     }
+
+  //     // Rest of your _getCurrentLocation implementation...
+  //   } catch (e) {
+  //     print("Error: $e");
+  //   }
+  // }
 
   Future<void> _pickImage(ImageSource source) async {
     try {
       final pickedFile = await ImagePicker().pickImage(source: source);
 
-      if (pickedFile != null) {
-        CroppedFile? croppedFile = await ImageCropper().cropImage(
-          sourcePath: pickedFile.path,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio3x2,
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.ratio4x3,
-            CropAspectRatioPreset.ratio16x9,
-          ],
-        );
+      if (attendanceStatus == 'Leave') {
+        // Do not allow picking image if attendance status is 'Leave'
+        return;
+      } else {
+        if (pickedFile != null) {
+          CroppedFile? croppedFile = await ImageCropper().cropImage(
+            sourcePath: pickedFile.path,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9,
+            ],
+          );
 
-        if (croppedFile != null) {
-          setState(() {
-            _selectedPhoto = croppedFile.path;
-          });
+          if (croppedFile != null) {
+            setState(() {
+              _selectedPhoto = croppedFile.path;
+            });
+          }
         }
       }
     } on Exception catch (e) {
@@ -269,6 +305,10 @@ print("${selectedDate.toUtc().toIso8601String()}");
   }
 
   Future<void> _submitLocation() async {
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${userData.token}'
+    };
     try {
       var request = http.MultipartRequest(
         'POST',
@@ -276,13 +316,14 @@ print("${selectedDate.toUtc().toIso8601String()}");
       );
       request.fields.addAll({
         'UserID': userData.id!,
-        'Date':
-            '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+        'Date': DateTime.now().toIso8601String(),
+        // '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
         'Time': _formatTime(DateTime.now()),
         'Address': '$_currentAddress',
         'Location':
             '${_currentPosition?.latitude ?? 0},${_currentPosition?.longitude ?? 0}',
       });
+      request.headers.addAll(headers);
 
       print('UserID: ${userData.id}');
       print('Date: ${request.fields['Date']}');
@@ -307,7 +348,7 @@ print("${selectedDate.toUtc().toIso8601String()}");
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Live Geolocation & Reverse Geocoding'),
+        title: Center(child: Text('Attendance')),
       ),
       body: SafeArea(
         child: Padding(
@@ -321,25 +362,131 @@ print("${selectedDate.toUtc().toIso8601String()}");
                   children: [
                     Text(
                       'Date: ${selectedDate.year}:${selectedDate.month}:${selectedDate.day}',
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Time: ${_formatTime(selectedDate)}',
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  // height: 170,
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (_isFetchingCurrentLocation)
+                        CircularProgressIndicator()
+                      else if (_currentPosition != null)
+                        Container(
+                          width: size.width,
+                          // height: 100,
+                          decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 240, 239, 239),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                      child: Icon(
+                                    Icons.fmd_good,
+                                    size: 40,
+                                    color: Color.fromARGB(255, 61, 124, 251),
+                                  )),
+                                  FutureBuilder<List<Placemark>>(
+                                    future: placemarkFromCoordinates(
+                                      _currentPosition!.latitude,
+                                      _currentPosition!.longitude,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else if (snapshot.hasData) {
+                                        List<String> addressParts = [];
+                                        if (snapshot.data![0].street != null) {
+                                          addressParts
+                                              .add(snapshot.data![0].street!);
+                                        }
+                                        if (snapshot.data![0].subLocality !=
+                                            null) {
+                                          addressParts.add(
+                                              snapshot.data![0].subLocality!);
+                                        }
+                                        if (snapshot.data![0].locality !=
+                                            null) {
+                                          addressParts
+                                              .add(snapshot.data![0].locality!);
+                                        }
+                                        if (snapshot
+                                                .data![0].administrativeArea !=
+                                            null) {
+                                          addressParts.add(snapshot
+                                              .data![0].administrativeArea!);
+                                        }
+                                        if (snapshot.data![0].postalCode !=
+                                            null) {
+                                          addressParts.add(
+                                              snapshot.data![0].postalCode!);
+                                        }
+                                        if (snapshot.data![0].country != null) {
+                                          addressParts
+                                              .add(snapshot.data![0].country!);
+                                        }
+                                        String formattedAddress =
+                                            addressParts.join(', ');
+
+                                        return SizedBox(
+                                          width: size.width - 90,
+                                          child: Text(
+                                            maxLines: 3,
+                                            '$formattedAddress',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return Text(
+                                          'Address: Loading...',
+                                          style: const TextStyle(),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     SizedBox(
-                      width: size.width / 4,
+                      width: size.width * .5 - 21,
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: () {
                           _updateAttendanceStatus('Present');
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                           primary: attendanceStatus == 'Present'
                               ? Colors.green
                               : Colors.white,
@@ -353,13 +500,25 @@ print("${selectedDate.toUtc().toIso8601String()}");
                     ),
                     const SizedBox(width: 10),
                     SizedBox(
-                      width: size.width / 4,
+                      width: size.width * .5 - 21,
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: () {
                           _updateAttendanceStatus('Leave');
+                          //===========
+                          if (attendanceStatus == 'Leave') {
+                            _isFetchingCurrentLocation = false;
+                            _selectedPhoto = null;
+                          } else {
+                            _isFetchingCurrentLocation = true;
+                          }
+                          //=================
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                           primary: attendanceStatus == 'Leave'
                               ? Colors.cyan
                               : Colors.white,
@@ -375,118 +534,46 @@ print("${selectedDate.toUtc().toIso8601String()}");
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 170,
+                      // height: 17,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if (_isFetchingCurrentLocation)
-                            CircularProgressIndicator()
-                          else if (_currentPosition != null)
-                            Container(
-                              width: size.width / 2 - 32,
-                              height: 100,
-                              decoration: const BoxDecoration(),
-                              child: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Current Location:',
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    // Text(
-                                    //   '${_currentPosition!.latitude}, ${_currentPosition!.longitude}',
-                                    //   style: const TextStyle(),
-                                    // ),
-                                    FutureBuilder<List<Placemark>>(
-                                      future: placemarkFromCoordinates(
-                                        _currentPosition!.latitude,
-                                        _currentPosition!.longitude,
-                                      ),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasError) {
-                                          return Text(
-                                              'Error: ${snapshot.error}');
-                                        } else if (snapshot.hasData) {
-                                          List<String> addressParts = [];
-                                          if (snapshot.data![0].street !=
-                                              null) {
-                                            addressParts
-                                                .add(snapshot.data![0].street!);
-                                          }
-                                          if (snapshot.data![0].subLocality !=
-                                              null) {
-                                            addressParts.add(
-                                                snapshot.data![0].subLocality!);
-                                          }
-                                          if (snapshot.data![0].locality !=
-                                              null) {
-                                            addressParts.add(
-                                                snapshot.data![0].locality!);
-                                          }
-                                          if (snapshot.data![0]
-                                                  .administrativeArea !=
-                                              null) {
-                                            addressParts.add(snapshot
-                                                .data![0].administrativeArea!);
-                                          }
-                                          if (snapshot.data![0].postalCode !=
-                                              null) {
-                                            addressParts.add(
-                                                snapshot.data![0].postalCode!);
-                                          }
-                                          if (snapshot.data![0].country !=
-                                              null) {
-                                            addressParts.add(
-                                                snapshot.data![0].country!);
-                                          }
-                                          String formattedAddress =
-                                              addressParts.join(', ');
-
-                                          return Text(
-                                            '$formattedAddress',
-                                            style: const TextStyle(),
-                                          );
-                                        } else {
-                                          return Text(
-                                            'Address: Loading...',
-                                            style: const TextStyle(),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 170,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (_selectedPhoto != null)
-                            Image.file(
-                              File(_selectedPhoto!),
-                              width: size.width / 2 - 32,
-                              height: 100,
-                              fit: BoxFit.cover,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.file(
+                                File(_selectedPhoto!),
+                                width: size.width - 32,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ElevatedButton(
-                            onPressed: () {
-                              _pickImage(ImageSource.camera);
-                            },
-                            child: const Icon(
-                              Icons.add_a_photo,
-                              color: Colors.black87,
-                              size: 40,
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: size.width - 32,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10.0), // Adjust the radius as needed
+                                ),
+                                // primary:
+                                // const Color.fromARGB(255, 61, 124, 251),
+                              ),
+                              onPressed: () {
+                                _pickImage(ImageSource.camera);
+                              },
+                              child: const Icon(
+                                Icons.add_a_photo,
+                                color: Colors.black87,
+                                size: 40,
+                              ),
                             ),
                           ),
                         ],
@@ -494,28 +581,35 @@ print("${selectedDate.toUtc().toIso8601String()}");
                     ),
                   ],
                 ),
-                const SizedBox(height: 300),
-                SizedBox(
-                  width: size.width - 32,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _submitAttendance();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: const Color.fromARGB(255, 61, 124, 251),
-                    ),
-                    child: const Text(
-                      'Submit Attendance',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 80),
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: SizedBox(
+          width: size.width - 32,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              _submitAttendance();
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Adjust the radius as needed
+              ),
+              primary: const Color.fromARGB(255, 61, 124, 251),
+            ),
+            child: const Text(
+              'Submit Attendance',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ),

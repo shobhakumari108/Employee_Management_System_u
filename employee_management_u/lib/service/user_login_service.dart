@@ -46,6 +46,7 @@ class AuthService {
       'Authorization': 'Bearer ${user.token}'
     };
     print("=============${user.token}");
+    print("++++++++++++++=:${user.id}");
     try {
       String updateEmployeeUrl =
           "http://192.168.29.135:2000/app/users/updateByUser/${user.id}";
@@ -132,6 +133,7 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final data = await response.stream.bytesToString();
+
       final jsondata = jsonDecode(data);
       UserData userData = UserData.fromJson(jsondata["data"]);
       Provider.of<UserProvider>(context, listen: false).setUser(userData);

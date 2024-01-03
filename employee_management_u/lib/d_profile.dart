@@ -69,12 +69,13 @@ class _DummyProfileState extends State<DummyProfile> {
             ),
             SizedBox(height: 20,),
             Text("Shobha Kumari", style: TextStyle(fontSize: 18,fontWeight:FontWeight.bold),),
-            Text("shobha@gmail.com"),
+            // Text("shobha@gmail.com"),
             SizedBox(height: 20,),
             Container(
               width: size.width,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10)
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -96,6 +97,37 @@ class _DummyProfileState extends State<DummyProfile> {
               width: size.width,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Text("Contact information",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                      
+                    ],),
+                    Divider(color: Colors.grey[300],),
+                    //  SizedBox(
+                    //       height: 10,
+                    //     ),
+                        Text("Mobile number : "),
+                         Divider(color: Colors.grey[300],),
+                        Text("Email : "),
+                  ],
+                ),
+              ),
+            ),
+            
+            SizedBox(height: 20,),
+             Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10)
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -109,16 +141,24 @@ class _DummyProfileState extends State<DummyProfile> {
                       
                       
                     ],),
+                    Divider(color: Colors.grey[300],),
                     Text('Job title : '),
+                    Divider(color: Colors.grey[300],),
                           Text('Joining date : '),
+                          Divider(color: Colors.grey[300],),
+                        
                           Text(
                             'Company name : ',
                           ),
+                          Divider(color: Colors.grey[300],),
                           Text(
                               "Employee id : "),
+                              Divider(color: Colors.grey[300],),
                           Text("Department : "),
+                          Divider(color: Colors.grey[300],),
                           Text(
                               "Employment status : "),
+                              Divider(color: Colors.grey[300],),
                           Text("Maneger id : "),
                   ],
                 ),
@@ -129,6 +169,7 @@ class _DummyProfileState extends State<DummyProfile> {
               width: size.width,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -141,13 +182,13 @@ class _DummyProfileState extends State<DummyProfile> {
                       Text("Additional information",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
                       
                     ],),
+                    Divider(color: Colors.grey[300],),
                     //  SizedBox(
                     //       height: 10,
                     //     ),
                         Text("Address : "),
                   ],
                 ),
-                
               ),
             ),
           ],),

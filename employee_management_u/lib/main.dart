@@ -1,4 +1,5 @@
 import 'package:employee_management_u/d_profile.dart';
+import 'package:employee_management_u/location.dart';
 import 'package:employee_management_u/provider/userProvider.dart';
 import 'package:employee_management_u/screen/splash_screen.dart';
 import 'package:employee_management_u/service/shared_pref.dart';
@@ -28,8 +29,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: SplashScreen(),
-      home:DummyProfile(),
+      home: SplashScreen(),
+      // home:DummyProfile(),
+      // home:LocationScreen(),
     );
   }
 }

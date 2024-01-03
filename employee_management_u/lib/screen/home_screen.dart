@@ -1,4 +1,3 @@
-
 import 'package:employee_management_u/model/userdata.dart';
 import 'package:employee_management_u/provider/userProvider.dart';
 
@@ -11,7 +10,9 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatefulWidget {
   // final UserData user;
 
-  const HomeScreen({super.key, });
+  const HomeScreen({
+    super.key,
+  });
   // const HomeScreen({super.key});
 
   @override
@@ -19,16 +20,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   late UserData userData;
-  
-   @override
-   void didChangeDependencies() {
-    super.didChangeDependencies();
-  
-      userData = Provider.of<UserProvider>(context).userInformation;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    userData = Provider.of<UserProvider>(context).userInformation;
   }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -53,14 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Your Name',
+                    'Shobha Kumari',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   Text(
-                    'Your Subtitle',
+                    'shobha@gmail.com',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                
+                // Text(userData.id!),
                 Row(
                   // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -108,14 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                CurrentLocationScreen(),
+                            builder: (context) => CurrentLocationScreen(),
                           ),
                         );
 
                         // Handle the first button action
                       },
                       style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Adjust the radius as needed
+                        ),
                         primary: const Color.fromARGB(255, 61, 124, 251),
                         fixedSize: Size(size.width / 2 - 35, 50),
                       ),
@@ -136,14 +139,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                DailySummaryScreen(),
+                            builder: (context) => DailySummaryScreen(),
                           ),
                         );
 
                         // Handle the second button action
                       },
                       style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Adjust the radius as needed
+                        ),
                         primary: const Color.fromARGB(255, 61, 124, 251),
                         fixedSize: Size(size.width / 2 - 35, 50),
                       ),
