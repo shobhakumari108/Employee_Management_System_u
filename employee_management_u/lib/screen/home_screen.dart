@@ -3,9 +3,11 @@ import 'package:employee_management_u/provider/userProvider.dart';
 
 import 'package:employee_management_u/screen/current_location_screen.dart';
 import 'package:employee_management_u/screen/daily_work_summary.dart';
+import 'package:employee_management_u/service/shared_pref.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   // final UserData user;
@@ -32,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    print("=====home==token==${userData.token}");
+   
     return Scaffold(
       appBar: AppBar(
         title: const Text('Employee management System'),
@@ -164,6 +168,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
+                // TextButton(onPressed: ()async{
+                //   await SharedPreferences.getInstance().then((value) {
+                //     print("====shared token==${value.getString("token")}");
+                //     print("====shared id==${value.getString("userId")}");
+
+                //   });
+                // }, child: Text("data"))
               ],
             ),
           ),

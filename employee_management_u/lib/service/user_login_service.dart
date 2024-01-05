@@ -42,77 +42,27 @@ class AuthService {
 
   static Future<bool> updateProfile(UserData user, context) async {
     var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${user.token}'
-    };
-    print("=============${user.token}");
-    print("++++++++++++++=:${user.id}");
-    try {
-      String updateEmployeeUrl =
-          "http://192.168.29.135:2000/app/users/updateByUser/${user.id}";
+'Authorization': 'Bearer ${user.token}'
+};
+var request = http.MultipartRequest('PUT', Uri.parse('http://192.168.29.135:2000/app/users/updateByUser/${user.id}'));
+request.fields.addAll({
+  'MoblieNumber': user.mobileNumber!,
+});
+request.files.add(await http.MultipartFile.fromPath('ProfilePhoto', user.profilePhoto!));
+request.headers.addAll(headers);
 
-      var request = http.MultipartRequest('PUT', Uri.parse(updateEmployeeUrl))
-        ..fields['MoblieNumber'] = user.mobileNumber ?? '';
+http.StreamedResponse response = await request.send();
 
-      // Check if the profile photo is a URL
-      if (_isImageUrl(user.profilePhoto)) {
-        // If it's a URL, add it directly as a field
-        request.fields['ProfilePhoto'] = user.profilePhoto!;
-      } else if (user.profilePhoto != null && user.profilePhoto!.isNotEmpty) {
-        // If it's a local file, add the file
-        var file = File(user.profilePhoto!);
-        var stream = http.ByteStream(file.openRead());
-        var length = await file.length();
+if (response.statusCode == 200) {
+  print(await response.stream.bytesToString());
+  
+  return true;
+}
+else {
+  print(response.reasonPhrase);
+  return false;
+}
 
-        var multipartFile = http.MultipartFile(
-          'ProfilePhoto',
-          stream,
-          length,
-          filename: file.path.split("/").last,
-        );
-
-        request.files.add(multipartFile);
-      }
-
-      // Add certificates
-      for (var certificate in user.certificates ?? []) {
-        if (_isImageUrl(certificate)) {
-          // If it's a URL, add it directly as a field
-          request.fields['Certificates'] = certificate;
-        } else {
-          // If it's a local file, add the file
-          var certificateFile = File(certificate);
-          var certificateStream = http.ByteStream(certificateFile.openRead());
-          var certificateLength = await certificateFile.length();
-
-          var certificateMultipartFile = http.MultipartFile(
-            'Certificates',
-            certificateStream,
-            certificateLength,
-            filename: certificateFile.path.split("/").last,
-          );
-
-          request.files.add(certificateMultipartFile);
-        }
-      }
-      request.headers.addAll(headers);
-      var response = await http.Response.fromStream(await request.send());
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Response Body: ${response.body}');
-        print("Profile updated");
-        final data = jsonDecode(response.body);
-        UserData userData = UserData.fromJson(data["data"]);
-        Provider.of<UserProvider>(context, listen: false).setUser(userData);
-        return true;
-      } else {
-        print(response.reasonPhrase);
-        return false;
-      }
-    } catch (e) {
-      print("Error in updateProfile: $e");
-      throw e;
-    }
   }
 
   static bool _isImageUrl(String? path) {

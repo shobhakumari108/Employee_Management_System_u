@@ -176,11 +176,13 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         Fluttertoast.showToast(msg: 'Could not fetch the current location.');
         return;
       }
-
+  print("=========auth${userData.token}");
       var headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${userData.token}'
+      
       };
+
       print("${userData.token}");
       print("===================${userData.id}");
       var request = http.MultipartRequest(
