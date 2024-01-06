@@ -1,45 +1,106 @@
-
-
 import 'dart:convert';
-
-import 'package:employee_management_u/model/userdata.dart';
-import 'package:employee_management_u/provider/userProvider.dart';
-import 'package:employee_management_u/screen/home.dart';
-import 'package:employee_management_u/widgets/task_incomplate.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:employee_management_u/provider/userProvider.dart';
+import 'package:employee_management_u/model/userdata.dart';
+
+class IncompleteTaskWidget extends StatefulWidget {
+  final Future<List<Map<String, dynamic>>> taskList;
+
+  IncompleteTaskWidget({required this.taskList});
+
+  @override
+  _IncompleteTaskWidgetState createState() => _IncompleteTaskWidgetState();
+}
+
+class _IncompleteTaskWidgetState extends State<IncompleteTaskWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: widget.taskList,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Text('No tasks available.');
+        } else {
+          List<Map<String, dynamic>> tasks = snapshot.data!;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var task in tasks)
+                Column(
+                  children: [
+                    CheckboxListTile(
+                      value: task['completed'] ?? false,
+                      onChanged: (value) async {
+                        await updateTaskCompletionStatus(task['_id'], value ?? false);
+                        setState(() {
+                          task['completed'] = value;
+                        });
+                      },
+                      title: Text(task['task'] ?? ' '),
+                      subtitle: Text('Date: ${task['createdAt']}'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Colors.green,
+                    ),
+                    SizedBox(height: 8),
+                  ],
+                ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> updateTaskCompletionStatus(String taskId, bool completed) async {
+    var headers = {
+      'Content-Type': 'application/json',
+      // 'Authorization': 'Bearer ${user.token}',
+    };
+
+    var request = http.Request(
+      'PUT',
+      Uri.parse('http://192.168.29.135:2000/app/task/updateTask/$taskId'),
+    );
+    request.headers.addAll(headers);
+    request.body = jsonEncode({
+      'completed': completed,
+    });
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Task $taskId completion status updated to: $completed');
+    } else {
+      print('Failed to update task status. ${response.reasonPhrase}');
+    }
+  }
+}
 
 class DailySummaryScreen extends StatefulWidget {
-  // final UserData user;
-
-  const DailySummaryScreen({Key? key,}) : super(key: key);
+  const DailySummaryScreen({Key? key}) : super(key: key);
 
   @override
   _DailySummaryScreenState createState() => _DailySummaryScreenState();
 }
 
 class _DailySummaryScreenState extends State<DailySummaryScreen> {
+  late UserData userData;
 
-late UserData userData;
-  
-   @override
-   void didChangeDependencies() {
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
-  
-      userData = Provider.of<UserProvider>(context).userInformation;
-
+    userData = Provider.of<UserProvider>(context).userInformation;
   }
 
-
-  TextEditingController _descriptionController = TextEditingController();
-  bool enableFeature1 = false;
-  bool enableFeature2 = false;
-
   Future<List<Map<String, dynamic>>> incompleteTasks() async {
-    print(";=========");
-    // Dynamically construct the URL using widget.employee.sId
     String getTaskUrl =
         'http://192.168.29.135:2000/app/task/getIncompletedTaskByUserId/${userData.id}';
 
@@ -56,44 +117,6 @@ late UserData userData;
       throw Exception('Error fetching tasks: $e');
     }
   }
-
-  // Future<void> _submitSummary() async {
-  //   try {
-  //     // Check if the description is not null or empty
-  //     if (_descriptionController.text == null ||
-  //         _descriptionController.text.isEmpty) {
-  //       _showToast('Please enter a valid description');
-  //       return;
-  //     }
-
-  //     var request = http.MultipartRequest('POST',
-  //         Uri.parse('http://192.168.29.135:2000/app/daily/addDailySummary'));
-  //     request.fields.addAll({
-  //       'UserID': userData.id!,
-  //       'Description': _descriptionController.text,
-  //       'EnableFeature1': enableFeature1.toString(),
-  //       'EnableFeature2': enableFeature2.toString(),
-  //     });
-
-      // http.StreamedResponse response = await request.send();
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       print(await response.stream.bytesToString());
-  //       print('Summary submitted successfully');
-  //       _showToast('Summary submitted successfully');
-  //       Navigator.of(context).pushReplacement(
-  //         MaterialPageRoute(
-  //             builder: (context) => MyHomePage()),
-  //       );
-  //     } else {
-  //       print('Failed to submit summary: ${response.reasonPhrase}');
-  //       _showToast('Failed to submit summary: ${response.reasonPhrase}');
-  //     }
-  //   } catch (e) {
-  //     print('Error submitting summary: $e');
-  //     _showToast('Error submitting summary: $e');
-  //   }
-  // }
 
   void _showToast(String message) {
     Fluttertoast.showToast(
@@ -113,7 +136,7 @@ late UserData userData;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Summary'),
+        title: Text('Daily Task'),
       ),
       body: Column(
         children: [
@@ -124,22 +147,16 @@ late UserData userData;
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                     IncompeletTaskWidget(
-                                taskList: incompleteTasks(),
-                              ),
-                   
-                   
+                    IncompleteTaskWidget(
+                      taskList: incompleteTasks(),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          
         ],
       ),
     );
   }
 }
-
-
-  
