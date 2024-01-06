@@ -82,7 +82,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     try {
       bool locationPermissionGranted = await _requestLocationPermission();
 
-      if (attendanceStatus == 'Leave') {
+      if (attendanceStatus == 'Leave' || attendanceStatus == 'Holiday') {
         // Do not allow fetching current location if attendance status is 'Leave'
         return;
       } else {
@@ -167,15 +167,24 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
 
   Future<void> _submitAttendance() async {
     try {
-      if (_selectedPhoto == null) {
+      if (attendanceStatus == 'Leave' || attendanceStatus == 'Holiday') {
+        //  Fluttertoast.showToast(msg: ' no need  a photo.');
+        // return;
+       
+      }else{
+       
+if (_selectedPhoto == null) {
         Fluttertoast.showToast(msg: 'Please select a photo.');
         return;
       }
-
-      if (_currentPosition == null) {
+      }
+      
+       if (_currentPosition == null) {
         Fluttertoast.showToast(msg: 'Could not fetch the current location.');
         return;
+
       }
+      
   print("=========auth${userData.token}");
       var headers = {
         'Content-Type': 'application/json',
@@ -204,8 +213,16 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
       print("${selectedDate.toUtc().toIso8601String()}");
       request.headers.addAll(headers);
 
-      request.files
-          .add(await http.MultipartFile.fromPath('Photo', _selectedPhoto!));
+
+      if (attendanceStatus != 'Leave' && attendanceStatus != 'Holiday') {
+      if (_selectedPhoto != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('Photo', _selectedPhoto!));
+      }
+    }
+
+      // request.files
+      //     .add(await http.MultipartFile.fromPath('Photo', _selectedPhoto!));
 
       http.StreamedResponse response = await request.send();
 
@@ -234,38 +251,13 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
       );
     }
   }
-  // Future<void> _pickImage(ImageSource source) async {
-  //   try {
-  //     if (attendanceStatus == 'Leave') {
-  //       // Do not allow picking image if attendance status is 'Leave'
-  //       return;
-  //     }
-
-  //     // Rest of your _pickImage implementation...
-  //   } on Exception catch (e) {
-  //     print('Error picking image: $e');
-  //     Fluttertoast.showToast(msg: 'Error picking image: $e');
-  //   }
-  // }
-
-  // Future<void> _getCurrentLocation() async {
-  //   try {
-  //     if (attendanceStatus == 'Leave') {
-  //       // Do not allow fetching current location if attendance status is 'Leave'
-  //       return;
-  //     }
-
-  //     // Rest of your _getCurrentLocation implementation...
-  //   } catch (e) {
-  //     print("Error: $e");
-  //   }
-  // }
+ 
 
   Future<void> _pickImage(ImageSource source) async {
     try {
       final pickedFile = await ImagePicker().pickImage(source: source);
 
-      if (attendanceStatus == 'Leave') {
+      if (attendanceStatus == 'Leave' || attendanceStatus == 'Holiday') {
         // Do not allow picking image if attendance status is 'Leave'
         return;
       } else {
@@ -399,7 +391,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Center(
+                                const  Center(
                                       child: Icon(
                                     Icons.fmd_good,
                                     size: 40,
@@ -459,7 +451,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                                           ),
                                         );
                                       } else {
-                                        return Text(
+                                        return const Text(
                                           'Address: Loading...',
                                           style: const TextStyle(),
                                         );
@@ -475,7 +467,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
+               /* Row(
                   children: [
                     SizedBox(
                       width: size.width * .5 - 21,
@@ -533,7 +525,86 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                       ),
                     ),
                   ],
+                ), */
+
+                //********************************** */
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: size.width / 4,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _updateAttendanceStatus('Present');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          primary: attendanceStatus == 'Present'
+                              ? Colors.green
+                              : Colors.white,
+                        ),
+                        child: const Text(
+                          'Present',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width / 4,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _updateAttendanceStatus('Holiday');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          primary: attendanceStatus == 'Holiday'
+                              ? Colors.yellow
+                              : Colors.white,
+                        ),
+                        child: const Text(
+                          'Holiday',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width / 4,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _updateAttendanceStatus('Leave');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          primary: attendanceStatus == 'Leave'
+                              ? Colors.cyan
+                              : Colors.white,
+                        ),
+                        child: const Text(
+                          'Leave',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+
+                // *************************************************
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -556,28 +627,29 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                           const SizedBox(
                             height: 20,
                           ),
-                          SizedBox(
-                            width: size.width - 32,
-                            height: 50,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      10.0), // Adjust the radius as needed
-                                ),
-                                // primary:
-                                // const Color.fromARGB(255, 61, 124, 251),
-                              ),
-                              onPressed: () {
-                                _pickImage(ImageSource.camera);
-                              },
-                              child: const Icon(
-                                Icons.add_a_photo,
-                                color: Colors.black87,
-                                size: 40,
-                              ),
-                            ),
-                          ),
+                          Visibility(
+  visible: !(attendanceStatus == 'Leave' || attendanceStatus == 'Holiday'),
+  child: SizedBox(
+    width: size.width - 32,
+    height: 50,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      onPressed: () {
+        _pickImage(ImageSource.camera);
+      },
+      child: const Icon(
+        Icons.add_a_photo,
+        color: Colors.black87,
+        size: 40,
+      ),
+    ),
+  ),
+),
+
                         ],
                       ),
                     ),

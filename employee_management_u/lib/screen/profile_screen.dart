@@ -43,7 +43,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: ListTile(
+     /* child: ListTile(
         title: Text(
           title,
           style: const TextStyle(
@@ -122,7 +122,9 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                 ),
               ),
       ),
+   */
     );
+
   }
 
   @override
@@ -145,7 +147,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
+            icon:const Icon(
               Icons.edit,
               color: Color.fromARGB(255, 61, 124, 251),
             ),
@@ -173,63 +175,129 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              _buildProfileCard(
-                'Name',
-                '${userData.firstName} ${userData.lastName}',
+            Text('${userData.firstName} ${userData.lastName}', style: TextStyle(fontSize: 20,fontWeight:FontWeight.bold),),
+            // Text("shobha@gmail.com"),
+           const SizedBox(height: 20,),
+            Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10)
               ),
-              _buildProfileCard(
-                'Job Title',
-                '${userData.jobTitle}',
+              child:const Padding(
+                padding:  EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Text("Achievement",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                      Icon(Icons.arrow_forward_ios)
+                    ],),
+                  ],
+                ),
               ),
-              _buildProfileCard(
-                'companyEmployeeID',
-                '${userData.companyEmployeeID}',
+            ),
+           const  SizedBox(height: 20,),
+             Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
               ),
-              _buildProfileCard(
-                'managerID',
-                '${userData.managerID}',
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  const  Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Text("Contact information",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                      
+                    ],),
+                    Divider(color: Colors.grey[300],),
+                    //  SizedBox(
+                    //       height: 10,
+                    //     ),
+                        Text("Mobile number : '${userData.mobileNumber}'"),
+                         Divider(color: Colors.grey[300],),
+                        Text("Email : ${userData.email} "),
+                  ],
+                ),
               ),
-              // _buildProfileCard(
-              //   'joiningDate',
-              //   '${userData.joiningDate}',
-              // ),
-              _buildProfileCard(
-                'jobTitle',
-                '${userData.jobTitle}',
+            ),
+            
+           const SizedBox(height: 20,),
+             Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10)
               ),
-              _buildProfileCard(
-                'mobileNumber',
-                '${userData.mobileNumber}',
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  const  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                      Text("General information",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                      
+                      
+                    ],),
+                    Divider(color: Colors.grey[300],),
+                    Text('Job title : ${userData.jobTitle} '),
+                    Divider(color: Colors.grey[300],),
+                          Text('Joining date : ${userData.joiningDate}'),
+                          Divider(color: Colors.grey[300],),
+                        
+                          Text(
+                            'Company name : ${userData.companyName}',
+                          ),
+                          Divider(color: Colors.grey[300],),
+                          Text(
+                              "Employee id : ${userData.companyEmployeeID} "),
+                              Divider(color: Colors.grey[300],),
+                          Text("Department : ${userData.department} "),
+                          Divider(color: Colors.grey[300],),
+                          Text(
+                              "Employment status : ${userData.employmentStatus}"),
+                              Divider(color: Colors.grey[300],),
+                          Text("Maneger id : ${userData.managerID} "),
+                  ],
+                ),
               ),
-              _buildProfileCard(
-                'companyName',
-                '${userData.companyName}',
+            ),
+           const SizedBox(height: 20,),
+             Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
               ),
-              _buildProfileCard(
-                'address',
-                '${userData.address}',
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  const  Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Text("Additional information",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                      
+                    ],),
+                    Divider(color: Colors.grey[300],),
+                    //  SizedBox(
+                    //       height: 10,
+                    //     ),
+                        Text("Address :${userData.address} "),
+                  ],
+                ),
               ),
-              _buildProfileCard(
-                'department',
-                '${userData.department}',
-              ),
-              _buildProfileCard(
-                'education',
-                '${userData.education}',
-              ),
-              _buildProfileCard(
-                'employmentStatus',
-                '${userData.employmentStatus}',
-              ),
-              _buildProfileCard(
-                'workSchedule',
-                '${userData.workSchedule}',
-              ),
-              _buildProfileCard(
-                'certificates',
-                '', // Empty string, as the actual value is displayed in the ListView
-              ),
+            ),
             ],
           ),
         ),

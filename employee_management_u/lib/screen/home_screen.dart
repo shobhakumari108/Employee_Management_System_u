@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:employee_management_u/model/userdata.dart';
 import 'package:employee_management_u/provider/userProvider.dart';
 
@@ -7,6 +9,7 @@ import 'package:employee_management_u/service/shared_pref.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,13 +26,32 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late UserData userData;
+late Future<List<Map<String, dynamic>>> holidaysFuture;
 
   @override
+  // void initState() {
+  //   super.initState();
+  //   userData = Provider.of<UserProvider>(context).userInformation;
+  //   holidaysFuture = fetchData();
+  // }
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     userData = Provider.of<UserProvider>(context).userInformation;
+    // holidaysFuture = fetchData();
   }
+
+  // Future<List<Map<String, dynamic>>> fetchData() async {
+  //   var url = Uri.parse('http://192.168.29.135:2000/app/holiday/getHoliday');
+  //   var response = await http.get(url);
+
+  //   if (response.statusCode == 200) {
+  //     var data = json.decode(response.body)['data'];
+  //     return List<Map<String, dynamic>>.from(data);
+  //   } else {
+  //     throw Exception('Failed to fetch data');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +197,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 //   });
                 // }, child: Text("data"))
+
+                
+      //             FutureBuilder(
+      //   future: fetchData(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return Center(child: CircularProgressIndicator());
+      //     } else if (snapshot.hasError) {
+      //       return Center(child: Text('===========Error: ${snapshot.error}'));
+      //     } else {
+      //       List<Map<String, dynamic>> holidays =
+      //           snapshot.data as List<Map<String, dynamic>>;
+
+      //       return ListView.builder(
+      //         itemCount: holidays.length,
+      //         itemBuilder: (context, index) {
+      //           var holiday = holidays[index];
+      //           var holidayName = holiday['holiday'];
+      //           var holidayDate = holiday['holiDate'];
+
+      //           return ListTile(
+      //             title: Text(holidayName),
+      //             subtitle: Text('Date: $holidayDate'),
+      //           );
+      //         },
+      //       );
+      //     }
+      //   },
+      // ),
+
+                
               ],
             ),
           ),
